@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using ConsoleApplication1.IncGraph;
 
@@ -71,6 +73,15 @@ namespace ConsoleApplication1
             Graph g = GetGraph();
             Console.WriteLine(g);
             Algorithms.BellmanFord(g, Node.S);
+//            Form form = new Form();
+//            form.Paint += new PaintEventHandler(pictureBox1_Paint);
+//            form.ShowDialog();
         }
+
+//        static void pictureBox1_Paint(object sender, PaintEventArgs e)
+//        {
+//            Pen s = new Pen(Color.Chartreuse);
+//            e.Graphics.DrawRectangle(s,new Rectangle(1,1,100,100));
+//        }
     }
 }

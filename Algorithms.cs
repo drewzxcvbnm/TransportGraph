@@ -8,14 +8,12 @@ namespace ConsoleApplication1
 {
     public class Algorithms
     {
-        public static void BellmanFord(Graph graph, Node src)
+        public static Dictionary<Node, Pair<int, List<Edge>>> BellmanFord(Graph graph, Node src)
         {
             int V = graph.GetNumberOfNodes(), E = graph.GetNumberOfEdges();
 
             Dictionary<Node, Pair<int, List<Edge>>> dist = new Dictionary<Node, Pair<int, List<Edge>>>();
 
-            // Step 1: Initialize distances from src to all other 
-            // vertices as INFINITE 
             foreach (Node value in Enum.GetValues(typeof(Node)))
             {
                 dist.Add(value, new Pair<int, List<Edge>>(int.MaxValue, new List<Edge>()));
@@ -24,9 +22,6 @@ namespace ConsoleApplication1
             dist[src].First = 0;
             List<Edge> edges = graph.GetEdges();
 
-            // Step 2: Relax all edges |V| - 1 times. A simple 
-            // shortest path from src to any other vertex can 
-            // have at-most |V| - 1 edges 
             for (int i = 1; i < V; ++i)
             {
                 for (int j = 0; j < E; ++j)
@@ -44,10 +39,6 @@ namespace ConsoleApplication1
                 }
             }
 
-            // Step 3: check for negative-weight cycles. The above 
-            // step guarantees shortest distances if graph doesn't 
-            // contain negative weight cycle. If we get a shorter 
-            // path, then there is a cycle. 
             for (int j = 0; j < E; ++j)
             {
                 Node u = edges[j].From;
@@ -56,16 +47,17 @@ namespace ConsoleApplication1
                 if (dist[u].First != int.MaxValue && dist[u].First + weight < dist[v].First)
                 {
                     Console.WriteLine("Graph contains negative weight cycle");
-                    return;
+                    return null;
                 }
             }
 
             foreach (var p in dist) p.Value.Second.Reverse();
 
-            printArr(dist, V);
+//            PrintResults(dist, V);
+            return dist;
         }
 
-        static void printArr(Dictionary<Node, Pair<int, List<Edge>>> dist, int V)
+        static void PrintResults(Dictionary<Node, Pair<int, List<Edge>>> dist, int V)
         {
             Console.WriteLine("Vertex Distance from Source");
             foreach (Node i in Enum.GetValues(typeof(Node)))
