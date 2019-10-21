@@ -42,11 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithms.cs" />
-    <Compile Include="IncGraph\Edge.cs" />
-    <Compile Include="IncGraph\Graph.cs" />
+    <Compile Include="Graph\Edges.cs" />
+    <Compile Include="Graph\Graph.cs" />
     <Compile Include="Pair.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransportationCostsCalculator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

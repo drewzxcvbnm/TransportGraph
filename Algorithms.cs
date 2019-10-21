@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ConsoleApplication1.IncGraph;
-using static ConsoleApplication1.Node;
+using ConsoleApplication1.Graph;
 
 namespace ConsoleApplication1
 {
     public class Algorithms
     {
-        public static Dictionary<Node, Pair<int, List<Edge>>> BellmanFord(Graph graph, Node src)
+        public static Dictionary<Node, Pair<int, List<Edge>>> BellmanFord(Graph.Graph graph, Node src)
         {
             int V = graph.GetNumberOfNodes(), E = graph.GetNumberOfEdges();
 
@@ -57,11 +56,12 @@ namespace ConsoleApplication1
             return dist;
         }
 
-        static void PrintResults(Dictionary<Node, Pair<int, List<Edge>>> dist, int V)
+        public static void PrintResults(Dictionary<Node, Pair<int, List<Edge>>> dist)
         {
             Console.WriteLine("Vertex Distance from Source");
             foreach (Node i in Enum.GetValues(typeof(Node)))
-                Console.WriteLine(i + "\t\t" + dist[i].First + " [" + string.Join(",",dist[i].Second.Select(e => e.ToString()).ToArray()) +"]");
+                Console.WriteLine(i + "\t\t" + dist[i].First + " [" +
+                                  string.Join(",", dist[i].Second.Select(e => e.ToString()).ToArray()) + "]");
         }
     }
 }

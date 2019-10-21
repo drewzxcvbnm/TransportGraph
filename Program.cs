@@ -1,25 +1,10 @@
 ﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using ConsoleApplication1.IncGraph;
+using System.Linq;
+using ConsoleApplication1.Graph;
 
 namespace ConsoleApplication1
 {
-    public enum Node
-    {
-        S,
-        T,
-        P1,
-        P2,
-        P3,
-        C1,
-        C2,
-        C3,
-        C4
-    }
-
-
     class MyClass
     {
         static Func<long> GetFlow = FlowGetter();
@@ -46,23 +31,34 @@ namespace ConsoleApplication1
             return () => bands[i++];
         }
 
-        private static Graph GetGraph()
+        public static Graph.Graph GetFlowGraphFromIncrementGraph(Graph.Graph inc)
+        {
+            Graph.Graph g = new Graph.Graph();
+            foreach (var edge in inc.GetEdges().Select(e => new Edge(e.From, e.To, 0)))
+            {
+                g.AddEdge(edge);
+            }
+
+            return g;
+        }
+
+        private static Graph.Graph GetIncrementGraph()
         {
             List<Node> producers = new List<Node>() {Node.P1, Node.P2, Node.P3};
             List<Node> consumers = new List<Node>() {Node.C1, Node.C2, Node.C3, Node.C4};
-            Graph g = new Graph();
+            Graph.Graph g = new Graph.Graph();
             foreach (var producer in producers)
             {
-                g.AddEdge(new Edge(Node.S, producer, GetBandwidth(), 0));
+                g.AddEdge(new IncrementEdge(Node.S, producer, GetBandwidth(), 0, false));
                 foreach (var consumer in consumers)
                 {
-                    g.AddEdge(new Edge(producer, consumer, GetBandwidth(), GetFlow()));
+                    g.AddEdge(new IncrementEdge(producer, consumer, GetBandwidth(), GetFlow(), false));
                 }
             }
 
             foreach (var consumer in consumers)
             {
-                g.AddEdge(new Edge(consumer, Node.T, GetBandwidth(), 0));
+                g.AddEdge(new IncrementEdge(consumer, Node.T, GetBandwidth(), 0, false));
             }
 
             return g;
@@ -70,9 +66,13 @@ namespace ConsoleApplication1
 
         public static void Main()
         {
-            Graph g = GetGraph();
-            Console.WriteLine(g);
-            Algorithms.BellmanFord(g, Node.S);
+            Graph.Graph g = GetIncrementGraph();
+            Pair<Graph.Graph, long> solve = new TransportationCostsCalculator(g).Solve();
+            Console.WriteLine("Price: " + solve.Second);
+            Console.WriteLine("Flow Graph:");
+            Console.WriteLine(solve.First);
+//            var bellmanFord = Algorithms.BellmanFord(g, Node.S);
+//            Algorithms.PrintResults(bellmanFord);
 //            Form form = new Form();
 //            form.Paint += new PaintEventHandler(pictureBox1_Paint);
 //            form.ShowDialog();
