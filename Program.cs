@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using ConsoleApplication1.Graph;
 
 namespace ConsoleApplication1
@@ -66,6 +67,7 @@ namespace ConsoleApplication1
 
         public static void Main()
         {
+//            NewMethod();
             Graph.Graph g = GetIncrementGraph();
             Pair<Graph.Graph, long> solve = new TransportationCostsCalculator(g).Solve();
             Console.WriteLine("Price: " + solve.Second);
@@ -76,6 +78,39 @@ namespace ConsoleApplication1
 //            Form form = new Form();
 //            form.Paint += new PaintEventHandler(pictureBox1_Paint);
 //            form.ShowDialog();
+        }
+
+        private static void NewMethod()
+        {
+            Graph.Graph g = new Graph.Graph();
+            g.AddEdge(new Edge(Node.S, Node.P2, 0));
+            g.AddEdge(new Edge(Node.S, Node.P3, 0));
+
+            g.AddEdge(new Edge(Node.P1, Node.S, 0));
+            g.AddEdge(new Edge(Node.P1, Node.C2, 11));
+            g.AddEdge(new Edge(Node.P1, Node.C4, 13));
+
+            g.AddEdge(new Edge(Node.P2, Node.C1, 16));
+            g.AddEdge(new Edge(Node.P2, Node.C2, 18));
+            g.AddEdge(new Edge(Node.P2, Node.C3, 20));
+            g.AddEdge(new Edge(Node.P2, Node.C4, 20));
+            g.AddEdge(new Edge(Node.P2, Node.S, 0));
+
+            g.AddEdge(new Edge(Node.P3, Node.C1, 26));
+            g.AddEdge(new Edge(Node.P3, Node.C2, 30));
+            g.AddEdge(new Edge(Node.P3, Node.C3, 28));
+            g.AddEdge(new Edge(Node.P3, Node.C4, 35));
+
+            g.AddEdge(new Edge(Node.C1, Node.P1, -10));
+
+            g.AddEdge(new Edge(Node.C2, Node.T, 0));
+
+            g.AddEdge(new Edge(Node.C3, Node.P1, -9));
+
+            g.AddEdge(new Edge(Node.C4, Node.T, 0));
+
+            List<Edge> edges = Algorithms.BellmanFord(g, Node.S)[Node.T].Second;
+            Console.WriteLine(String.Join(",", edges));
         }
 
 //        static void pictureBox1_Paint(object sender, PaintEventArgs e)

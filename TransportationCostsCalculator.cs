@@ -31,15 +31,22 @@ namespace ConsoleApplication1
 
         private void Calculate()
         {
+            int i = 0;
             while (talliedFlow < requiredFlow)
             {
+                Console.WriteLine("Iter " + (++i));
                 List<IncrementEdge> bestPath = Algorithms.BellmanFord(incGraph, Node.S)[Node.T].Second
                     .Select(e => (IncrementEdge) e).ToList();
                 var bands = bestPath.Select(e => e.Bandwidth).ToList();
                 bands.Add(requiredFlow - talliedFlow);
                 long delta = bands.Min();
                 talliedFlow += delta;
-                price += delta * bestPath.Select(e => e.Flow).Sum();
+                price += delta * bestPath.Select(e => e.Flow).Sum(); //1289 -> 1559 -> 1919
+                Console.WriteLine("delta: " + delta + " min(" + string.Join(",", bands) + ")");
+                Console.WriteLine("Dmin: " + bestPath.Select(e => e.Flow).Sum());
+                Console.WriteLine("New Price: " + price);
+                Console.WriteLine("Path: " + string.Join(",", bestPath));
+                Console.WriteLine("");
                 UpdateFlowGraph(bestPath, delta);
                 UpdateIncrementGraph(delta, bestPath);
             }
@@ -47,30 +54,36 @@ namespace ConsoleApplication1
 
         private void UpdateIncrementGraph(long delta, List<IncrementEdge> bestPath)
         {
-            foreach (var incrementEdge in bestPath)
-            {
-                IncrementEdge edge = (IncrementEdge) incGraph.FindEdge(incrementEdge);
-                edge.Bandwidth -= delta;
-                if (edge.Bandwidth == 0) incGraph.RemoveEdge(edge);
-                if (!incGraph.HasReversed(edge))
-                    incGraph.AddEdge(new IncrementEdge(edge.To, edge.From, delta, edge.Flow * -1, true));
-            }
+            bestPath.ForEach(e => UpdateIncrementEdge(delta, e));
+        }
+
+        private void UpdateIncrementEdge(long delta, IncrementEdge incrementEdge)
+        {
+            IncrementEdge edge = (IncrementEdge) incGraph.FindEdge(incrementEdge);
+            edge.Bandwidth -= delta;
+            if (edge.Bandwidth == 0) incGraph.RemoveEdge(edge);
+            if (!incGraph.HasReversed(edge))
+                incGraph.AddEdge(new IncrementEdge(edge.To, edge.From, 0, edge.Flow * -1, true));
+            Edge query = new Edge(edge.To, edge.From, edge.Flow);
+            ((IncrementEdge) incGraph.FindEdge(query)).Bandwidth += delta;
         }
 
         private void UpdateFlowGraph(List<IncrementEdge> bestPath, long delta)
         {
-            foreach (var edge in bestPath)
-            {
-                Edge query = edge;
-                long addition = delta;
-                if (edge.IsReversed)
-                {
-                    addition *= -1;
-                    query = new Edge(edge.To, edge.From, edge.Flow);
-                }
+            bestPath.ForEach(e => UpdateFlowEdge(delta, e));
+        }
 
-                flowGraph.FindEdge(query).Flow += addition;
+        private void UpdateFlowEdge(long delta, IncrementEdge edge)
+        {
+            Edge query = edge;
+            long addition = delta;
+            if (edge.IsReversed)
+            {
+                addition *= -1;
+                query = new Edge(edge.To, edge.From, edge.Flow);
             }
+
+            flowGraph.FindEdge(query).Flow += addition;
         }
     }
 }
