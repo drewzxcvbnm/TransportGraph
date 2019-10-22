@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using ConsoleApplication1.Graph;
-using static ConsoleApplication1.MyClass;
+using ConsoleApplication1.Structure;
+using static ConsoleApplication1.Utilities;
 
 namespace ConsoleApplication1
 {
@@ -11,11 +10,11 @@ namespace ConsoleApplication1
     {
         private long requiredFlow;
         private long talliedFlow;
-        private Graph.Graph flowGraph;
-        private Graph.Graph incGraph;
+        private Structure.Graph flowGraph;
+        private Structure.Graph incGraph;
         private long price;
 
-        public TransportationCostsCalculator(Graph.Graph incGraph)
+        public TransportationCostsCalculator(Structure.Graph incGraph)
         {
             this.incGraph = incGraph;
             this.flowGraph = GetFlowGraphFromIncrementGraph(incGraph);
@@ -23,30 +22,23 @@ namespace ConsoleApplication1
             talliedFlow = 0;
         }
 
-        public Pair<Graph.Graph, long> Solve()
+        public Pair<Structure.Graph, long> Solve()
         {
             Calculate();
-            return new Pair<Graph.Graph, long>(flowGraph, price);
+            return new Pair<Structure.Graph, long>(flowGraph, price);
         }
 
         private void Calculate()
         {
-            int i = 0;
             while (talliedFlow < requiredFlow)
             {
-                Console.WriteLine("Iter " + (++i));
-                List<IncrementEdge> bestPath = Algorithms.BellmanFord(incGraph, Node.S)[Node.T].Second
+                List<IncrementEdge> bestPath = Utilities.BellmanFord(incGraph, Node.S)[Node.T].Second
                     .Select(e => (IncrementEdge) e).ToList();
                 var bands = bestPath.Select(e => e.Bandwidth).ToList();
                 bands.Add(requiredFlow - talliedFlow);
                 long delta = bands.Min();
                 talliedFlow += delta;
                 price += delta * bestPath.Select(e => e.Flow).Sum(); //1289 -> 1559 -> 1919
-                Console.WriteLine("delta: " + delta + " min(" + string.Join(",", bands) + ")");
-                Console.WriteLine("Dmin: " + bestPath.Select(e => e.Flow).Sum());
-                Console.WriteLine("New Price: " + price);
-                Console.WriteLine("Path: " + string.Join(",", bestPath));
-                Console.WriteLine("");
                 UpdateFlowGraph(bestPath, delta);
                 UpdateIncrementGraph(delta, bestPath);
             }

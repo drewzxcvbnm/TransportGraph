@@ -1,13 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ConsoleApplication1.Graph;
+using ConsoleApplication1.Structure;
 
 namespace ConsoleApplication1
 {
-    public class Algorithms
+    public class Utilities
     {
-        public static Dictionary<Node, Pair<int, List<Edge>>> BellmanFord(Graph.Graph graph, Node src)
+        public static Structure.Graph GetFlowGraphFromIncrementGraph(Structure.Graph inc)
+        {
+            Structure.Graph g = new Structure.Graph();
+            foreach (var edge in inc.GetEdges().Select(e => new Edge(e.From, e.To, 0)))
+            {
+                g.AddEdge(edge);
+            }
+
+            return g;
+        }
+
+        public static Dictionary<Node, Pair<int, List<Edge>>> BellmanFord(Structure.Graph graph, Node src)
         {
             int V = graph.GetNumberOfNodes(), E = graph.GetNumberOfEdges();
 

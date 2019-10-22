@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleApplication1.Graph
+namespace ConsoleApplication1.Structure
 {
     public enum Node
     {
@@ -14,6 +14,43 @@ namespace ConsoleApplication1.Graph
         C2,
         C3,
         C4
+    }
+
+
+    public class Edge
+    {
+        public Node From { get; set; }
+        public Node To { get; set; }
+        public long Flow { get; set; }
+
+        public Edge(Node from, Node to, long flow)
+        {
+            From = from;
+            To = to;
+            Flow = flow;
+        }
+
+        public override string ToString()
+        {
+            return $"[{From}->{To}, {Flow}]";
+        }
+    }
+
+    public class IncrementEdge : Edge
+    {
+        public long Bandwidth { get; set; }
+        public bool IsReversed { get; set; }
+
+        public IncrementEdge(Node from, Node to, long bandwidth, long flow, bool isReversed) : base(from, to, flow)
+        {
+            Bandwidth = bandwidth;
+            IsReversed = isReversed;
+        }
+
+        public override string ToString()
+        {
+            return $"[{From}->{To}, {Bandwidth}/{Flow}]";
+        }
     }
 
     public class Graph
@@ -48,7 +85,7 @@ namespace ConsoleApplication1.Graph
             Edge single = graph[from].Single(e => e.From == edge.From && e.To == edge.To);
             graph[from].Remove(single);
         }
-        
+
         public List<Edge> GetEdgesForNode(Node node) => new List<Edge>(graph[node]);
 
         public bool HasReversed(Edge edge)
@@ -56,7 +93,7 @@ namespace ConsoleApplication1.Graph
             List<Edge> edges = graph[edge.To];
             return edges.Any(e => e.To == edge.From && e.From == edge.To);
         }
-        
+
         public override string ToString()
         {
             return "{\n\t" + string.Join("\t",
