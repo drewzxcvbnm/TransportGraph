@@ -7,9 +7,9 @@ namespace ConsoleApplication1
 {
     public class Utilities
     {
-        public static Structure.Graph GetFlowGraphFromIncrementGraph(Structure.Graph inc)
+        public static Graph<Edge> GetFlowGraphFromIncrementGraph(Graph<IncrementEdge> inc)
         {
-            Structure.Graph g = new Structure.Graph();
+            Graph<Edge> g = new Graph<Edge>();
             foreach (var edge in inc.GetEdges().Select(e => new Edge(e.From, e.To, 0)))
             {
                 g.AddEdge(edge);
@@ -18,7 +18,7 @@ namespace ConsoleApplication1
             return g;
         }
 
-        public static Dictionary<Node, Pair<int, List<Edge>>> BellmanFord(Structure.Graph graph, Node src)
+        public static Dictionary<Node, Pair<int, List<Edge>>> BellmanFord(Graph<IncrementEdge> graph, Node src)
         {
             int V = graph.GetNumberOfNodes(), E = graph.GetNumberOfEdges();
 
@@ -30,7 +30,7 @@ namespace ConsoleApplication1
             }
 
             dist[src].First = 0;
-            List<Edge> edges = graph.GetEdges();
+            List<IncrementEdge> edges = graph.GetEdges();
 
             for (int i = 1; i < V; ++i)
             {
@@ -63,7 +63,6 @@ namespace ConsoleApplication1
 
             foreach (var p in dist) p.Value.Second.Reverse();
 
-//            PrintResults(dist, V);
             return dist;
         }
 

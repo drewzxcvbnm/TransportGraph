@@ -53,51 +53,58 @@ namespace ConsoleApplication1.Structure
         }
     }
 
-    public class Graph
+    public class Graph<T> where T : Edge
     {
-        private Dictionary<Node, List<Edge>> graph = new Dictionary<Node, List<Edge>>();
+        private Dictionary<Node, List<T>> graph = new Dictionary<Node, List<T>>();
 
-        public void AddEdge(Edge edge)
+        public void AddEdge(T edge)
         {
             Node from = edge.From;
             Node to = edge.To;
-            if (!graph.ContainsKey(from)) graph.Add(from, new List<Edge>());
+            if (!graph.ContainsKey(from)) graph.Add(from, new List<T>());
             graph[from].Add(edge);
-            if (!graph.ContainsKey(to)) graph.Add(to, new List<Edge>());
+            if (!graph.ContainsKey(to)) graph.Add(to, new List<T>());
         }
 
         public int GetNumberOfNodes() => graph.Keys.Count;
 
         public int GetNumberOfEdges() => graph.Values.Select(list => list.Count).Sum();
 
-        public List<Edge> GetEdges() => new List<Edge>(graph.Values.SelectMany(list => list).ToArray());
+        public List<T> GetEdges() => new List<T>(graph.Values.SelectMany(list => list).ToArray());
 
-        public Edge FindEdge(Edge edge)
+        public T FindEdge(T edge)
         {
             Node from = edge.From;
-            Edge single = graph[from].Single(e => e.From == edge.From && e.To == edge.To);
+            T single = graph[from].Single(e => e.From == edge.From && e.To == edge.To);
             return single;
         }
 
-        public void RemoveEdge(Edge edge)
+        public T FindReverseEdge(T edge)
+        {
+            Node from = edge.To;
+            T single = graph[from].Single(e => e.To == edge.From && e.From == edge.To);
+            return single;
+        }
+
+        public void RemoveEdge(T edge)
         {
             Node from = edge.From;
-            Edge single = graph[from].Single(e => e.From == edge.From && e.To == edge.To);
+            T single = graph[from].Single(e => e.From == edge.From && e.To == edge.To);
             graph[from].Remove(single);
         }
 
-        public List<Edge> GetEdgesForNode(Node node) => new List<Edge>(graph[node]);
+        public List<T> GetEdgesForNode(Node node) => new List<T>(graph[node]);
 
-        public bool HasReversed(Edge edge)
+        public bool HasReversed(T edge)
         {
-            List<Edge> edges = graph[edge.To];
+            List<T> edges = graph[edge.To];
             return edges.Any(e => e.To == edge.From && e.From == edge.To);
         }
 
         public override string ToString()
         {
             return "{\n\t" + string.Join("\t",
-                       graph.Select(kv => kv.Key + "=" + "{" + string.Join<Edge>(",", kv.Value) + "}\n").ToArray()) +
+                       graph.Select(kv => kv.Key + "=" + "{" + string.Join<T>(",", kv.Value) + "}\n").ToArray()) +
                    "}";
         }
     }

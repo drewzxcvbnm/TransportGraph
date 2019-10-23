@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using static ConsoleApplication1.Structure.GraphAssembler;
 using System.Linq;
-using System.Security.Cryptography;
 using ConsoleApplication1.Structure;
 
 namespace ConsoleApplication1
@@ -18,12 +17,12 @@ namespace ConsoleApplication1
         public static void Main()
         {
             List<long> input = Console.ReadLine().Split().Select(s => long.Parse(s)).ToList();
-            Graph graph = AssembleGraph()
+            Graph<IncrementEdge> graph = AssembleGraph()
                 .SetBands(input.GetRange(0, 3), input.GetRange(3, 4))
                 .SetFlows(input.GetRange(7, 12))
                 .Create();
-            Pair<Graph,long> solve = new TransportationCostsCalculator(graph).Solve();
-            Console.WriteLine("Price is "+solve.Second);
+            Pair<Graph<Edge>, long> solve = new TransportationCostsCalculator(graph).Solve();
+            Console.WriteLine("Price is " + solve.Second);
             Console.WriteLine("Flow Graph:");
             Console.WriteLine(solve.First);
         }

@@ -10,11 +10,11 @@ namespace ConsoleApplication1
     {
         private long requiredFlow;
         private long talliedFlow;
-        private Structure.Graph flowGraph;
-        private Structure.Graph incGraph;
+        private Graph<Edge> flowGraph;
+        private Graph<IncrementEdge> incGraph;
         private long price;
 
-        public TransportationCostsCalculator(Structure.Graph incGraph)
+        public TransportationCostsCalculator(Graph<IncrementEdge> incGraph)
         {
             this.incGraph = incGraph;
             this.flowGraph = GetFlowGraphFromIncrementGraph(incGraph);
@@ -22,10 +22,10 @@ namespace ConsoleApplication1
             talliedFlow = 0;
         }
 
-        public Pair<Structure.Graph, long> Solve()
+        public Pair<Graph<Edge>, long> Solve()
         {
             Calculate();
-            return new Pair<Structure.Graph, long>(flowGraph, price);
+            return new Pair<Graph<Edge>, long>(flowGraph, price);
         }
 
         private void Calculate()
@@ -38,7 +38,7 @@ namespace ConsoleApplication1
                 bands.Add(requiredFlow - talliedFlow);
                 long delta = bands.Min();
                 talliedFlow += delta;
-                price += delta * bestPath.Select(e => e.Flow).Sum(); //1289 -> 1559 -> 1919
+                price += delta * bestPath.Select(e => e.Flow).Sum();
                 UpdateFlowGraph(bestPath, delta);
                 UpdateIncrementGraph(delta, bestPath);
             }
@@ -51,13 +51,12 @@ namespace ConsoleApplication1
 
         private void UpdateIncrementEdge(long delta, IncrementEdge incrementEdge)
         {
-            IncrementEdge edge = (IncrementEdge) incGraph.FindEdge(incrementEdge);
+            IncrementEdge edge = incGraph.FindEdge(incrementEdge);
             edge.Bandwidth -= delta;
             if (edge.Bandwidth == 0) incGraph.RemoveEdge(edge);
             if (!incGraph.HasReversed(edge))
                 incGraph.AddEdge(new IncrementEdge(edge.To, edge.From, 0, edge.Flow * -1, true));
-            Edge query = new Edge(edge.To, edge.From, edge.Flow);
-            ((IncrementEdge) incGraph.FindEdge(query)).Bandwidth += delta;
+            incGraph.FindReverseEdge(edge).Bandwidth += delta;
         }
 
         private void UpdateFlowGraph(List<IncrementEdge> bestPath, long delta)
@@ -71,8 +70,8 @@ namespace ConsoleApplication1
             long addition = delta;
             if (edge.IsReversed)
             {
-                addition *= -1;
-                query = new Edge(edge.To, edge.From, edge.Flow);
+                flowGraph.FindReverseEdge(edge).Flow -= addition;
+                return;
             }
 
             flowGraph.FindEdge(query).Flow += addition;

@@ -15,13 +15,16 @@ namespace ConsoleApplication1.Structure
 
     public interface ICreate
     {
-        Graph Create();
+        Graph<IncrementEdge> Create();
     }
 
     public class GraphAssembler : ISetBand, ISetFlow, ICreate
     {
         private static Func<long> _getFlow;
         private static Func<long> _getBandwidth;
+        private List<Node> producers = new List<Node>() {Node.P1, Node.P2, Node.P3};
+        private List<Node> consumers = new List<Node>() {Node.C1, Node.C2, Node.C3, Node.C4};
+        private Graph<IncrementEdge> g = new Graph<IncrementEdge>();
 
         private GraphAssembler()
         {
@@ -55,11 +58,8 @@ namespace ConsoleApplication1.Structure
             return this;
         }
 
-        public Graph Create()
+        public Graph<IncrementEdge> Create()
         {
-            List<Node> producers = new List<Node>() {Node.P1, Node.P2, Node.P3};
-            List<Node> consumers = new List<Node>() {Node.C1, Node.C2, Node.C3, Node.C4};
-            Graph g = new Graph();
             foreach (var producer in producers)
             {
                 g.AddEdge(new IncrementEdge(Node.S, producer, _getBandwidth(), 0, false));
