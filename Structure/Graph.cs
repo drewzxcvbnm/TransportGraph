@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleApplication1.Structure
@@ -32,7 +33,7 @@ namespace ConsoleApplication1.Structure
 
         public override string ToString()
         {
-            return $"[{From}->{To}, {Flow}]";
+            return string.Format("[{0}->{1}, {2}]", From, To, Flow);
         }
     }
 
@@ -49,7 +50,7 @@ namespace ConsoleApplication1.Structure
 
         public override string ToString()
         {
-            return $"[{From}->{To}, {Bandwidth}/{Flow}]";
+            return string.Format("[{0}->{1}, {2}/{3}]", From, To, Bandwidth, Flow);
         }
     }
 
@@ -66,11 +67,20 @@ namespace ConsoleApplication1.Structure
             if (!graph.ContainsKey(to)) graph.Add(to, new List<T>());
         }
 
-        public int GetNumberOfNodes() => graph.Keys.Count;
+        public int GetNumberOfNodes()
+        {
+            return graph.Keys.Count;
+        }
 
-        public int GetNumberOfEdges() => graph.Values.Select(list => list.Count).Sum();
+        public int GetNumberOfEdges()
+        {
+            return graph.Values.Select(list => list.Count).Sum();
+        }
 
-        public List<T> GetEdges() => new List<T>(graph.Values.SelectMany(list => list).ToArray());
+        public List<T> GetEdges()
+        {
+            return new List<T>(graph.Values.SelectMany(list => list).ToArray());
+        }
 
         public T FindEdge(T edge)
         {
@@ -93,7 +103,10 @@ namespace ConsoleApplication1.Structure
             graph[from].Remove(single);
         }
 
-        public List<T> GetEdgesForNode(Node node) => new List<T>(graph[node]);
+        public List<T> GetEdgesForNode(Node node)
+        {
+            return new List<T>(graph[node]);
+        }
 
         public bool HasReversed(T edge)
         {

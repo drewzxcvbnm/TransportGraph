@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ConsoleApplication1.Structure;
-using static ConsoleApplication1.Utilities;
 
 namespace ConsoleApplication1
 {
@@ -17,7 +16,7 @@ namespace ConsoleApplication1
         public TransportationCostsCalculator(Graph<IncrementEdge> incGraph)
         {
             this.incGraph = incGraph;
-            this.flowGraph = GetFlowGraphFromIncrementGraph(incGraph);
+            this.flowGraph = Utilities.GetFlowGraphFromIncrementGraph(incGraph);
             requiredFlow = incGraph.GetEdgesForNode(Node.P1).Select(e => ((IncrementEdge) e).Bandwidth).Sum();
             talliedFlow = 0;
         }

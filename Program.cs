@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using static ConsoleApplication1.Structure.GraphAssembler;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using ConsoleApplication1.Structure;
 
 namespace ConsoleApplication1
 {

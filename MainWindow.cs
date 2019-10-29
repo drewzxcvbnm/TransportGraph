@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ConsoleApplication1.Structure;
-using static ConsoleApplication1.Structure.GraphAssembler;
+using ConsoleApplication1.Structure;
 
 namespace ConsoleApplication1
 {
@@ -37,12 +37,12 @@ namespace ConsoleApplication1
             flows.Add(Convert.ToInt64(this.P3C2.Text));
             flows.Add(Convert.ToInt64(this.P3C3.Text));
             flows.Add(Convert.ToInt64(this.P3C4.Text));
-            Graph<IncrementEdge> graph = AssembleGraph()
+            Graph<IncrementEdge> graph = GraphAssembler.AssembleGraph()
                 .SetBands(prods, cons)
                 .SetFlows(flows)
                 .Create();
             Pair<Graph<Edge>, long> solve = new TransportationCostsCalculator(graph).Solve();
-            this.@out.Text = $"Price is {solve.Second}\nFlow Graph:\n{solve.First}";
+            this.@out.Text = string.Format("Price is {0}\nFlow Graph:\n{1}", solve.Second, solve.First);
         }
 
     }
