@@ -2,12 +2,24 @@
 using System.Collections.Generic;
 using static ConsoleApplication1.Structure.GraphAssembler;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using ConsoleApplication1.Structure;
 
 namespace ConsoleApplication1
 {
     class MainClass
     {
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
+
         /**
          * Inputs:
          * 63 68 69 80 90 42 52 101 111 151 131 161 181 201 201 261 301 281 351 //price: 37090 
@@ -17,17 +29,10 @@ namespace ConsoleApplication1
 
         public static void Main()
         {
-            Console.Write("Enter all required graph information>");
-            List<long> input = Console.ReadLine().Split().Select(s => long.Parse(s)).ToList();
-            Graph<IncrementEdge> graph = AssembleGraph()
-                .SetBands(input.GetRange(0, 3), input.GetRange(3, 4))
-                .SetFlows(input.GetRange(7, 12))
-                .Create();
-            Pair<Graph<Edge>, long> solve = new TransportationCostsCalculator(graph).Solve();
-            Console.WriteLine("Price is " + solve.Second);
-            Console.WriteLine("Flow Graph:");
-            Console.WriteLine(solve.First);
-            Console.ReadKey();
+            var cnw = GetConsoleWindow();
+            ShowWindow(cnw, SW_HIDE);
+            MainWindow mainWindow = new MainWindow();
+            Application.Run(mainWindow);
         }
     }
 }
